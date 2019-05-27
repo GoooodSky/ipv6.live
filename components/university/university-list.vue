@@ -39,7 +39,16 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog id="dialog" v-model="universityDetail" :visible.sync="$store.state.detailVisible" width="90%" center :close-on-press-escape="false" :close-on-click-modal="false" :show-close="false">
+    <el-dialog
+      id="dialog"
+      v-model="universityDetail"
+      :visible.sync="$store.state.detailVisible"
+      width="70%"
+      center
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+      :show-close="false"
+    >
       <template v-if="universityDetail">
         <span slot="title" class="dialog-title">{{ universityDetail.name }}</span>
         <section class="dialog-body">
@@ -50,7 +59,8 @@
           <div class="dialog-universityDetail">
             <p>所在地：{{ universityDetail.province }} {{ universityDetail.city == universityDetail.province ? '' : universityDetail.city }}</p>
             <p>
-              <span>高校类型：{{ universityDetail.level }}</span> <span class="platform" v-if="universityDetail.platform != '——'"> {{ universityDetail.platform }}</span>
+              <span>高校类型：{{ universityDetail.level }}</span>
+              <span class="platform" v-if="universityDetail.platform != '——'"> {{ universityDetail.platform }}</span>
             </p>
             <p>高校隶属于：{{ universityDetail.superior }}</p>
             <p>学校网址：{{ universityDetail.website }}</p>

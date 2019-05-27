@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 export const state = () => ({
   universityList: [],
   provincesDetail: {},
@@ -44,8 +42,8 @@ export const mutations = {
   }
 }
 export const actions = {
-  async nuxtServerInit({ commit }) {
-    let {data: { universityList }} = await axios.get('http://127.0.0.1:3000/api/getUniversity')
+  async nuxtServerInit({ commit }, ctx) {
+    let {data: { universityList }} = await ctx.$axios.get('http://127.0.0.1:3000/api/getUniversity')
     commit('initial', universityList)
   },
   detailVisible({ commit }, selectedUniversity) {

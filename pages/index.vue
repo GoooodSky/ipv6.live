@@ -21,11 +21,7 @@ export default {
   },
   head() {
     return { title: 'IPv6部署状态 -- 总览' }
-  },
-  // async fetch({ store, params }) {
-  //   let {data: { universityList }} = await axios.get('http://127.0.0.1:3000/api/getUniversity')
-  //   store.commit('initial', universityList)
-  // }
+  }
 }
 </script>
 

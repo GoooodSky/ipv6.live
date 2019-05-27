@@ -4,8 +4,16 @@
       <img src="../../assets/img/ipv4toipv6.png" alt="Logo" />
     </section>
     <section class="welcome-button">
-      <input v-model="universityInput" class="welcome-button-input" type="text" placeholder="输入高校名称"  v-on:keyup.enter="$store.dispatch('detailVisible', universityInput)"/>
-      <button class="welcome-button-search" type="button" name="button" @click="$store.dispatch('detailVisible', universityInput)">探测</button>
+      <input
+        v-model="universityInput"
+        class="welcome-button-input"
+        type="text"
+        placeholder="输入高校名称"
+        v-on:keyup.enter="$store.dispatch('detailVisible', universityInput)"
+      />
+      <button class="welcome-button-search" type="button" name="button" @click="$store.dispatch('detailVisible', universityInput)">
+        探测
+      </button>
     </section>
     <section class="visitor-status">
       <VisitorStatus />

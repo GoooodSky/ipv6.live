@@ -5,7 +5,7 @@ import mongoose from 'mongoose'
 
 import dbConfig from './db/config'
 import api from './api/index'
-import spider from './db/spider'
+// import spider from './db/spider'
 
 const app = new Koa()
 
@@ -37,7 +37,7 @@ async function start() {
   } else {
     await nuxt.ready()
   }
-  spider.updateUniversityInfo(1) //每1小时刷新一次
+  // spider.updateUniversityInfo(1) //每1小时刷新一次
   app.use(api.routes()).use(api.allowedMethods())
   app.use(ctx => {
     ctx.status = 200
