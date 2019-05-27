@@ -1,14 +1,14 @@
 <template>
   <section id="map-container">
-    <div class="map-title">
+    <!-- <div class="map-title">
       <h1>/ 高校IPv6部署地图 /</h1>
-    </div>
+    </div> -->
     <div id="universityMap"></div>
-    <div class="analysis">
+    <!-- <div class="analysis">
       <h2>一些有趣的分析</h2>
       <p>普及度最高的省/直辖市/自治区 前三名：北京（91%），浙江（88%），上海（86%）</p>
       <p>分布最均匀的省/直辖市/自治区 前三名：北京（91%），浙江（88%），上海（86%）</p>
-    </div>
+    </div> -->
   </section>
 </template>
 
@@ -17,7 +17,6 @@ import echarts from 'echarts'
 import 'echarts/extension/bmap/bmap.js'
 
 export default {
-  head: { script: [{ src: 'https://api.map.baidu.com/api?v=2.0&ak=eDa0t6bUVXlSGheGwaFfzxp7V8ODincj' }] },
   mounted() {
     var data = [
       { name: '海门', value: 9 },

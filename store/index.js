@@ -27,7 +27,7 @@ export const mutations = {
             return e.ipv6Resolve != 'N/A' && e.province == province
           }
         }).length
-        let percentage = ((ipv6SupportCount / universityCount) * 100).toFixed(2) + '%'
+        let percentage = Number(((ipv6SupportCount / universityCount) * 100).toFixed(2))
 
         return { [province]: { universityCount, ipv6SupportCount, percentage } }
       })

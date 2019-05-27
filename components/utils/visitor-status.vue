@@ -33,8 +33,5 @@ export default {
     word-break: keep-all;
     margin-bottom: 10px;
   }
-  a {
-    cursor: pointer;
-  }
 }
 </style>
