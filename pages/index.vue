@@ -22,4 +22,12 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.el-dialog{
+  max-width: 90vmin;
+}
+.el-checkbox{
+  display: block;
+  margin: 20px !important;
+}
+</style>

@@ -73,7 +73,6 @@ export default {
       province: '全国',
       yes: '<i class="el-icon-success" style="color: #67C23A"></i>',
       no: '<i class="el-icon-error" style="color: #F56C6C"></i>'
-      // defaultImg: 'this[:src] ="' + require('../../static/img/universityLogo/0.png') + '"'
     }
   },
   components: { UniversitySearch },

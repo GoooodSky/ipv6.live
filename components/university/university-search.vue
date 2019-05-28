@@ -3,7 +3,7 @@
     id="university-search"
     v-model="universityDetail"
     :visible.sync="$store.state.detailVisible"
-    width="70%"
+    width="90%"
     center
     :close-on-press-escape="false"
     :close-on-click-modal="false"
@@ -24,14 +24,14 @@
           </p>
           <p>高校隶属于：{{ universityDetail.superior }}</p>
           <p>学校网址：{{ universityDetail.website }}</p>
-          <p>IPv6解析：{{ universityDetail.ipv6Resolve }}</p>
-          <p>IPv4解析：{{ universityDetail.ipv4Resolve }}</p>
+          <p :style="universityDetail.ipv6Resolve == 'N/A' ? 'color: #F56C6C' : 'color: #67C23A'">IPv6解析：{{ universityDetail.ipv6Resolve }}</p>
+          <p :style="universityDetail.ipv4Resolve == 'N/A' ? 'color: #F56C6C' : 'color: #67C23A'">IPv4解析：{{ universityDetail.ipv4Resolve }}</p>
           <!-- <p>网络状况：</p> -->
         </div>
         <el-dialog
           class="report-dialog"
-          width="70%"
-          :title="$store.state.selectedUniversity + '--信息报错'"
+          width="80vmin"
+          :title="$store.state.selectedUniversity + '【错误反馈】'"
           :visible.sync="reportVisible"
           append-to-body
         >
@@ -40,6 +40,8 @@
             <el-checkbox label="IPv6地址解析错误"></el-checkbox>
             <el-checkbox label="IPv4地址解析错误"></el-checkbox>
           </el-checkbox-group>
+          <el-input v-model="input" placeholder="其它问题"></el-input>
+
           <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="reportError">提交</el-button>
           </span>
@@ -78,6 +80,7 @@ export default {
   methods: {
     reportError() {
       this.reportVisible = false
+      this.reportList = []
       this.$message({
         message: '反馈成功，感谢您的指正！',
         type: 'success'
