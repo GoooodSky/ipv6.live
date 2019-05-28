@@ -13,8 +13,8 @@ module.exports = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: pkg.description }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
-    // script: [{ src: 'https://api.map.baidu.com/api?v=2.0&ak=eDa0t6bUVXlSGheGwaFfzxp7V8ODincj' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    script: [{ src: 'https://api.map.baidu.com/api?v=2.0&ak=eDa0t6bUVXlSGheGwaFfzxp7V8ODincj' }]
   },
   server: {
     port: 3000, // default: 3000

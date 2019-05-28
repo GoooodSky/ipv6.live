@@ -18,7 +18,7 @@ export default {
     UniversityList,
     UniversityDistribution
   },
-  head: { title: 'IPv6部署状态 -- 总览', script: [{ src: 'https://api.map.baidu.com/api?v=2.0&ak=eDa0t6bUVXlSGheGwaFfzxp7V8ODincj' }] }
+  head: { title: 'IPv6部署状态 -- 总览' }
 }
 </script>
 

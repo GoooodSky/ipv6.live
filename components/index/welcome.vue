@@ -9,7 +9,9 @@
         class="welcome-button-input"
         type="text"
         placeholder="输入高校名称"
-        v-on:keyup.enter="$store.dispatch('detailVisible', universityInput)"
+        @focus="inputFocus = true"
+        @blur="handleBlur"
+        @keyup.enter="$store.dispatch('detailVisible', universityInput)"
       />
       <button class="welcome-button-clear" type="button" name="button" @click="clearInput()" v-if="universityInput">
         <i class="el-icon-error"></i>
@@ -17,7 +19,7 @@
       <button class="welcome-button-search" type="button" name="button" @click="$store.dispatch('detailVisible', universityInput)">
         探测
       </button>
-      <section class="suggestions" v-if="suggestions">
+      <section class="suggestions" v-if="inputFocus && suggestions">
         <div>
           <ul>
             <li v-for="university in suggestions" :key="university" @click="handleClick(university)">
@@ -37,14 +39,18 @@
 import VisitorStatus from '@/components/utils/visitor-status'
 export default {
   data() {
-    return { universityInput: null }
+    return { universityInput: null, inputFocus: false }
   },
   components: { VisitorStatus },
   computed: {
+    searchList() {
+      return [...this.universityInput]
+    },
     suggestions() {
       let suggestions = this.$store.state.universityList
         .filter(university => {
-          return this.universityInput && university.name.includes(this.universityInput)
+          // return this.universityInput && university.name.includes(...this.searchList)
+          return this.universityInput && this.searchList.every(item => [...university.name].includes(item))
         })
         .map(university => university.name)
       if (suggestions.length) return suggestions
@@ -54,12 +60,28 @@ export default {
   methods: {
     handleClick(university) {
       this.universityInput = university
+      this.inputFocus = false
     },
     highlight(university) {
-      return university.replace(this.universityInput, `<b style="color:#409EFF">${this.universityInput}</b>`)
+      return [...university]
+        .map(item => {
+          if (this.searchList.includes(item)) {
+            return `<b style="color:#409EFF">${item}</b>`
+          } else {
+            return item
+          }
+        })
+        .join('')
+      // return university.replace(this.universityInput, `<b style="color:#409EFF">${this.universityInput}</b>`)
     },
     clearInput() {
       this.universityInput = null
+    },
+    handleBlur() {
+      let that = this
+      setTimeout(function() {
+        that.inputFocus = false
+      }, 100)
     }
   }
 }

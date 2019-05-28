@@ -28,7 +28,13 @@
           <p>IPv4解析：{{ universityDetail.ipv4Resolve }}</p>
           <!-- <p>网络状况：</p> -->
         </div>
-        <el-dialog width="30%" :title="$store.state.selectedUniversity + '--信息报错'" :visible.sync="reportVisible" append-to-body>
+        <el-dialog
+          class="report-dialog"
+          width="70%"
+          :title="$store.state.selectedUniversity + '--信息报错'"
+          :visible.sync="reportVisible"
+          append-to-body
+        >
           <el-checkbox-group v-model="reportList">
             <el-checkbox label="网址错误"></el-checkbox>
             <el-checkbox label="IPv6地址解析错误"></el-checkbox>
@@ -38,7 +44,7 @@
             <el-button type="primary" @click="reportError">提交</el-button>
           </span>
         </el-dialog>
-        <span class="report" @click="reportVisible = true">问题反馈 <i class="el-icon-info"></i></span>
+        <span class="report" @click="reportVisible = true"><i class="el-icon-info"></i></span>
       </section>
 
       <span slot="footer" class="dialog-footer">
@@ -73,7 +79,7 @@ export default {
     reportError() {
       this.reportVisible = false
       this.$message({
-        message: '反馈成功，感谢您的支持！',
+        message: '反馈成功，感谢您的指正！',
         type: 'success'
       })
     }
