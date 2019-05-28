@@ -28,10 +28,22 @@
           <p>IPv4解析：{{ universityDetail.ipv4Resolve }}</p>
           <!-- <p>网络状况：</p> -->
         </div>
-        <span class="report">信息报错</span>
+        <el-dialog width="30%" :title="$store.state.selectedUniversity + '--信息报错'" :visible.sync="reportVisible" append-to-body>
+          <el-checkbox-group v-model="reportList">
+            <el-checkbox label="网址错误"></el-checkbox>
+            <el-checkbox label="IPv6地址解析错误"></el-checkbox>
+            <el-checkbox label="IPv4地址解析错误"></el-checkbox>
+          </el-checkbox-group>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="reportError">提交</el-button>
+          </span>
+        </el-dialog>
+        <span class="report" @click="reportVisible = true">问题反馈 <i class="el-icon-info"></i></span>
       </section>
 
-      <span slot="footer" class="dialog-footer"> <el-button type="danger" @click="$store.dispatch('detailInvisible')">关闭</el-button> </span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="$store.dispatch('detailInvisible')">关闭</el-button>
+      </span>
     </template>
     <template v-else>
       <span slot="title" class="dialog-title">抱歉，没有这所学校</span>
@@ -43,6 +55,9 @@
 
 <script>
 export default {
+  data() {
+    return { reportVisible: false, reportList: [] }
+  },
   computed: {
     universityDetail() {
       let name = this.$store.state.selectedUniversity
@@ -52,6 +67,15 @@ export default {
         })
         .pop()
       return university
+    }
+  },
+  methods: {
+    reportError() {
+      this.reportVisible = false
+      this.$message({
+        message: '反馈成功，感谢您的支持！',
+        type: 'success'
+      })
     }
   }
 }
@@ -83,11 +107,13 @@ export default {
         border-radius: 5px;
       }
     }
-    .report{
+    .report {
       position: absolute;
+      font-size: 14px;
       right: 20px;
       bottom: 20px;
-      color: red;
+      color: #f56c6c;
+      cursor: pointer;
     }
   }
 }

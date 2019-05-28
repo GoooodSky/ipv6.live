@@ -178,9 +178,11 @@ export default {
 #universityList {
   padding-bottom: 20px;
   #pagination {
-    overflow: scroll;
-    padding: 0 5%;
+    overflow-y: scroll;
+    overflow-x: visible;
+    // padding: 0 5%;
     margin: 30px auto;
+    text-align: center;
   }
 }
 .tableHeaderFixed {

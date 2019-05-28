@@ -1,10 +1,9 @@
 <template>
-  <section id="province-container">
-    <!-- {{ provinceList }} -->
+  <section id="provinceList">
     <el-table :data="provinceList" style="width: 100%" :default-sort="{ prop: 'universityCount', order: 'descending' }">
       <el-table-column prop="name" label="省/市/自治区" align="center"> </el-table-column>
       <el-table-column prop="universityCount" label="高校总计(所)" align="center" sortable> </el-table-column>
-      <el-table-column prop="ipv6SupportCount" label="支持IPv6的高校数(所)" align="center" sortable> </el-table-column>
+      <el-table-column prop="ipv6SupportCount" label="支持IPv6的高校(所)" align="center" sortable> </el-table-column>
       <el-table-column prop="percentage" label="IPv6普及率(%)" align="center" sortable> </el-table-column>
     </el-table>
   </section>
@@ -29,8 +28,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-#province-container {
-  height: 1000px;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -22,7 +22,9 @@ export default {
     UniversityProvince,
     UniversityMap
   },
-  head: { script: [{ src: 'https://api.map.baidu.com/api?v=2.0&ak=eDa0t6bUVXlSGheGwaFfzxp7V8ODincj' }] },
+  // head: {
+  //
+  // },
   data() {
     return { showProvince: true }
   },
@@ -39,15 +41,19 @@ export default {
   position: relative;
   .universityDistribution-title {
     text-align: center;
-    margin: 20px;
+    padding: 20px;
+    background-color: rgba(251, 226, 49, 0.1);
+
     cursor: pointer;
     .title {
       font-size: 30px;
-      color: #606266;
+      color: #aaa;
     }
     .select {
-      font-size: 20px;
+      font-size: 18px;
+      margin: 10px auto;
       font-weight: 800;
+      color: #aaa;
       .active {
         color: #409eff;
       }
