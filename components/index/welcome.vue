@@ -4,8 +4,30 @@
       <img src="../../assets/img/ipv4toipv6.png" alt="Logo" />
     </section>
     <section class="welcome-button">
-      <input v-model="universityInput" class="welcome-button-input" type="text" placeholder="输入高校名称"  v-on:keyup.enter="$store.dispatch('detailVisible', universityInput)"/>
-      <button class="welcome-button-search" type="button" name="button" @click="$store.dispatch('detailVisible', universityInput)">探测</button>
+      <input
+        v-model="universityInput"
+        class="welcome-button-input"
+        type="text"
+        placeholder="输入高校名称"
+        @focus="inputFocus = true"
+        @blur="handleBlur"
+        @keyup.enter="$store.dispatch('detailVisible', universityInput)"
+      />
+      <button class="welcome-button-clear" type="button" name="button" @click="clearInput()" v-if="universityInput">
+        <i class="el-icon-error"></i>
+      </button>
+      <button class="welcome-button-search" type="button" name="button" @click="$store.dispatch('detailVisible', universityInput)">
+        探测
+      </button>
+      <section class="suggestions" v-if="inputFocus && suggestions">
+        <div>
+          <ul>
+            <li v-for="university in suggestions" :key="university" @click="handleClick(university)">
+              <span v-html="highlight(university)"></span>
+            </li>
+          </ul>
+        </div>
+      </section>
     </section>
     <section class="visitor-status">
       <VisitorStatus />
@@ -17,9 +39,51 @@
 import VisitorStatus from '@/components/utils/visitor-status'
 export default {
   data() {
-    return { universityInput: '' }
+    return { universityInput: null, inputFocus: false }
   },
-  components: { VisitorStatus }
+  components: { VisitorStatus },
+  computed: {
+    searchList() {
+      return [...this.universityInput]
+    },
+    suggestions() {
+      let suggestions = this.$store.state.universityList
+        .filter(university => {
+          // return this.universityInput && university.name.includes(...this.searchList)
+          return this.universityInput && this.searchList.every(item => [...university.name].includes(item))
+        })
+        .map(university => university.name)
+      if (suggestions.length) return suggestions
+      else return null
+    }
+  },
+  methods: {
+    handleClick(university) {
+      this.universityInput = university
+      this.inputFocus = false
+    },
+    highlight(university) {
+      return [...university]
+        .map(item => {
+          if (this.searchList.includes(item)) {
+            return `<b style="color:#409EFF">${item}</b>`
+          } else {
+            return item
+          }
+        })
+        .join('')
+      // return university.replace(this.universityInput, `<b style="color:#409EFF">${this.universityInput}</b>`)
+    },
+    clearInput() {
+      this.universityInput = null
+    },
+    handleBlur() {
+      let that = this
+      setTimeout(function() {
+        that.inputFocus = false
+      }, 100)
+    }
+  }
 }
 </script>
 
@@ -51,6 +115,7 @@ export default {
   }
   .welcome-button {
     position: relative;
+    z-index: 2;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -69,29 +134,56 @@ export default {
       font-size: 1rem;
       padding: 0 1rem;
     }
+    .welcome-button-clear {
+      position: absolute;
+      border: 0;
+      background-color: transparent;
+      cursor: pointer;
+      outline: 0;
+      height: 2.5rem;
+      right: 50px;
+    }
     .welcome-button-search {
       position: absolute;
       right: 0;
+      outline: 0;
       width: 2.5rem;
       height: 2.5rem;
       border-radius: 1.5rem;
       background-color: #004881;
-      // border:0;
       border: 1px solid #fff;
-      // border-top: 1px solid trasparent;
-      // border-bottom: 1px solid trasparent;
-      // border-left: 1px solid trasparent;
       color: #fff;
       cursor: pointer;
     }
   }
+  .suggestions {
+    position: relative;
+    top: 50px;
+    border: 4px solid #004881;
+    ul {
+      background-color: #fff;
+      padding: 10px;
+      max-height: 150px;
+      overflow: scroll;
+      li {
+        list-style: none;
+        padding: 5px;
+        font-size: 15px;
+        cursor: pointer;
+        &:hover {
+          background-color: #f5f7fa;
+        }
+      }
+    }
+  }
   .visitor-status {
     position: absolute;
-    bottom: 15px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
     color: #fff;
     font-size: 1rem;
+    z-index: 1;
   }
 }
 @keyframes logo {

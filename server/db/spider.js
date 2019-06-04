@@ -50,7 +50,6 @@ async function getIP(url) {
       resolve(ipv6List.shift())
     })
   })
-
   let ipv4 = await ipv4Promise
   let ipv6 = await ipv6Promise
 
@@ -85,7 +84,7 @@ async function pingTest(ipv4, ipv6) {
 
   return { ipv4Ping, ipv4Rtt, ipv6Ping, ipv6Rtt }
 }
-
+async function httpTest(ipv4, ipv6) {}
 async function updateInfo(address) {
   let { ipv4, ipv6 } = await getIP(address)
   let { ipv4Ping, ipv4Rtt, ipv6Ping, ipv6Rtt } = await pingTest(ipv4, ipv6)
@@ -103,12 +102,16 @@ async function spider() {
     let endTag = universityList.length
     universityList.map(async university => {
       let { ipv4, ipv6, ipv4Ping, ipv4Rtt, ipv6Ping, ipv6Rtt } = await updateInfo(university.website)
-      university.ipv4Resolve = ipv4
-      university.ipv6Resolve = ipv6
+      if (ipv4 != 'N/A') {
+        university.ipv4Resolve = ipv4
+      }
+      if (ipv6 != 'N/A') {
+        university.ipv6Resolve = ipv6
+      }
       university.ipv4Ping = ipv4Ping
       university.ipv6Ping = ipv6Ping
       university.save(function() {
-        console.log(startTag, university.name + ipv4, ipv4Ping, ipv4Rtt, ipv6, ipv6Ping, ipv6Rtt, '更新成功')
+        // console.log(startTag, university.name + ipv4, ipv4Ping, ipv4Rtt, ipv6, ipv6Ping, ipv6Rtt, '更新成功')
         if (endTag === startTag++) {
           let updatedTime = getTime()
           let usedTime = (new Date().getTime() - startTime) / 1000
@@ -119,13 +122,13 @@ async function spider() {
     })
   }
 }
-spider()
-// function updateUniversityInfo(h) {
-//   //将小时转化成毫秒
-//   let freq = h * 60 * 60 * 1000
-//   spider()
-//   setInterval(() => {
-//     spider()
-//   }, freq)
-// }
-// export default { updateUniversityInfo }
+// spider()
+function updateUniversityInfo(h) {
+  //将小时转化成毫秒
+  let freq = h * 60 * 60 * 1000
+  spider()
+  setInterval(() => {
+    spider()
+  }, freq)
+}
+export default { updateUniversityInfo }
