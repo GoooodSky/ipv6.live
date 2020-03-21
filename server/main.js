@@ -7,7 +7,10 @@ const { getTime } = require('./utils/tools')
 let isUpdating = false
 
 mongoose.connect('mongodb://127.0.0.1:27017/university', {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true 
+}).then(res => {
+  console.log('数据库连接成功')
 })
 
 async function websiteTest(website) {
