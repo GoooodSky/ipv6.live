@@ -2,11 +2,12 @@ export const state = () => ({
   universityList: [],
   provincesDetail: {},
   detailVisible: false,
-  selectedUniversity: ''
+  selectedUniversity: '',
+  // cityList: {}
 })
 
 export const mutations = {
-  initial(state, universityList) {
+  initialuniversityList(state, universityList) {
     let provinces = ['全国'].concat(...new Set(universityList.map(item => item.province)))
 
     state.universityList = universityList
@@ -39,12 +40,18 @@ export const mutations = {
   },
   detailInvisible(state) {
     state.detailVisible = false
-  }
+  },
+  // initialCityList(state, cityList) {
+    // state.cityList = cityList
+  // }
 }
 export const actions = {
   async nuxtServerInit({ commit }, ctx) {
-    let {data: { universityList }} = await ctx.$axios.get('http://127.0.0.1:3000/api/getUniversity')
-    commit('initial', universityList)
+    let { data: { universityList } } = await ctx.$axios.get('/api/getUniversity')
+    commit('initialuniversityList', universityList)
+
+    // let { data: { cityData } } = await ctx.$axios.get('http://127.0.0.1:3000/api/getCity')
+    // commit('initialCityList', cityData)
   },
   detailVisible({ commit }, selectedUniversity) {
     commit('detailVisible', selectedUniversity)

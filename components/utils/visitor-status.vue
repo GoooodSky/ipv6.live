@@ -1,7 +1,9 @@
 <template>
   <section id="visitor-status">
-    <span>当前IP: {{ address }} [ {{ family }} ] </span>
-    <!-- <span>当前IP: 2001:da8:237:200:7483:55eb:e5c7:6e4c [ IPv6 ] </span> -->
+    <span>
+      当前IP: {{ address }}
+      <sup :style="{color:IPv6Support?'#67C23A':'#F56C6C'}">{{ family }}</sup>
+    </span>
     <span v-if="IPv6Support">恭喜！您已经支持IPv6</span>
     <span v-else>您的网络暂不支持IPv6</span>
   </section>
@@ -35,7 +37,7 @@ export default {
   max-width: 100vw;
   span {
     display: block;
-    word-break:normal;
+    white-space:nowrap;
     margin-bottom: 10px;
     text-align: center;
   }

@@ -1,20 +1,20 @@
 <template>
   <div id="index">
-    <Welcome />
+    <Search/>
     <UniversityList />
-    <UniversityDistribution />
+    <!-- <UniversityDistribution /> -->
   </div>
 </template>
 
 <script>
-import Welcome from '@/components/index/welcome'
+import Search from '@/components/utils/search'
 import UniversityList from '@/components/university/university-list'
 import UniversityDistribution from '@/components/university/university-distribution'
 export default {
   name: 'index',
   layoyt: 'default',
   components: {
-    Welcome,
+    Search,
     UniversityList,
     UniversityDistribution
   },
@@ -23,11 +23,5 @@ export default {
 </script>
 
 <style lang="scss">
-.el-dialog{
-  max-width: 90vmin;
-}
-.el-checkbox{
-  display: block;
-  margin: 20px !important;
-}
+
 </style>

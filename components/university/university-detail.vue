@@ -1,0 +1,148 @@
+<template>
+  <el-dialog
+    id="university-detail"
+    v-model="universityDetail"
+    :visible.sync="$store.state.detailVisible"
+    width="85%"
+    center
+    :close-on-press-escape="false"
+    :close-on-click-modal="false"
+    :show-close="false"
+  >
+    <template v-if="universityDetail">
+      <span slot="title" class="dialog-title">{{ universityDetail.name }}</span>
+      <section class="dialog-body">
+        <div class="dialog-img">
+          <img :src="'/img/universityCrest/' + universityDetail.rank + '.png'" />
+        </div>
+        <div class="dialog-universityDetail">
+          <p>所在地：{{ universityDetail.province }} {{ universityDetail.city == universityDetail.province ? '' : universityDetail.city }}</p>
+          <p>
+            <span>高校类型：{{ universityDetail.level }}</span>
+            <span
+              class="platform"
+              v-if="universityDetail.platform != '——'"
+            >{{ universityDetail.platform }}</span>
+          </p>
+          <p>高校隶属于：{{ universityDetail.superior }}</p>
+          <p>学校网址：{{ universityDetail.website }}</p>
+          <p
+            :style="universityDetail.ipv6Resolve == 'N/A' ? 'color: #F56C6C' : 'color: #67C23A'"
+          >IPv6解析：{{ universityDetail.ipv6Resolve }}</p>
+          <p
+            :style="universityDetail.ipv4Resolve == 'N/A' ? 'color: #F56C6C' : 'color: #67C23A'"
+          >IPv4解析：{{ universityDetail.ipv4Resolve }}</p>
+        </div>
+        <el-dialog
+          class="report-dialog"
+          width="80vmin"
+          :title="$store.state.selectedUniversity + '【错误反馈】'"
+          :visible.sync="reportVisible"
+          append-to-body
+        >
+          <el-checkbox-group v-model="reportList">
+            <el-checkbox label="网址错误"></el-checkbox>
+            <el-checkbox label="IPv6地址解析错误"></el-checkbox>
+            <el-checkbox label="IPv4地址解析错误"></el-checkbox>
+          </el-checkbox-group>
+          <el-input v-model="input" placeholder="其它问题"></el-input>
+
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="reportError">提交</el-button>
+          </span>
+        </el-dialog>
+        <span class="report" @click="reportVisible = true">
+          <i class="el-icon-info"></i>
+        </span>
+      </section>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="$store.dispatch('detailInvisible')">关闭</el-button>
+      </span>
+    </template>
+    <template v-else>
+      <span slot="title" class="dialog-title">抱歉，没有这所学校</span>
+      <section class="dialog-body">
+        <span>错误的名称，或尚未收录该所高校</span>
+      </section>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="danger" @click="$store.dispatch('detailInvisible')">关闭</el-button>
+      </span>
+    </template>
+  </el-dialog>
+</template>
+
+<script>
+export default {
+  data() {
+    return { reportVisible: false, reportList: [] }
+  },
+  computed: {
+    universityDetail() {
+      let name = this.$store.state.selectedUniversity
+      let university = this.$store.state.universityList
+        .filter(university => {
+          return university.name == name
+        })
+        .pop()
+      return university
+    }
+  },
+  methods: {
+    reportError() {
+      this.reportVisible = false
+      this.reportList = []
+      this.$message({
+        message: '反馈成功，感谢您的指正！',
+        type: 'success'
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+#university-detail {
+  .el-dialog {
+    max-width: 400px;
+  }
+  .dialog-title {
+    font-size: 22px;
+  }
+  .el-dialog__body {
+    padding: 20px 50px;
+  }
+  .dialog-body {
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-align: left;
+    .dialog-img {
+      text-align: center;
+      img {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 30px;
+      }
+    }
+    .dialog-universityDetail {
+      .platform {
+        color: #fff;
+        background-color: #f56c6c;
+        padding: 2px 10px;
+        margin-left: 5px;
+        border-radius: 5px;
+      }
+    }
+    .report {
+      position: absolute;
+      font-size: 14px;
+      right: 20px;
+      bottom: 20px;
+      color: #f56c6c;
+      cursor: pointer;
+    }
+  }
+}
+</style>

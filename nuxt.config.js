@@ -20,7 +20,7 @@ module.exports = {
         href: 'https://use.fontawesome.com/releases/v5.8.1/css/all.css'
       }
     ],
-    script: [{ src: 'https://api.map.baidu.com/api?v=2.0&ak=eDa0t6bUVXlSGheGwaFfzxp7V8ODincj' }]
+    script: [{ src: 'https://gw.alipayobjects.com/os/antv/pkg/_antv.l7-2.0.0-beta.19/dist/l7.js' }]
   },
   server: {
     port: 3000, // default: 3000
@@ -34,12 +34,15 @@ module.exports = {
   /*
    ** Global CSS
    */
-  css: ['element-ui/lib/theme-chalk/reset.css', 'element-ui/lib/theme-chalk/index.css'],
+  css: ['element-ui/lib/theme-chalk/reset.css', 'element-ui/lib/theme-chalk/index.css', 'assets/main.css'],
 
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/element-ui', '@/plugins/vue-inject'],
+  plugins: [
+    { src: '@/plugins/element-ui' },
+    { src: '@/plugins/vue-inject' },
+  ],
 
   /*
    ** Nuxt.js modules
@@ -54,9 +57,10 @@ module.exports = {
    */
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
-    proxy: true
+    proxy: true,
+    baseURL: 'http://127.0.0.1:3000'
   },
-  proxy: { '/api': { target: 'http://ipv6.live' } },
+  // proxy: { '/api': { target: 'http://ipv6.live' } },
 
   /*
    ** Build configuration
@@ -67,6 +71,6 @@ module.exports = {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) { }
   }
 }
