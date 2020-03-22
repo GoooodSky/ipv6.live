@@ -9,7 +9,7 @@ const dns = require('dns')
 const TIMEOUT_IN_MILLISECONDS = 10 * 1000
 const NS_PER_SEC = 1e9
 const MS_PER_NS = 1e6
-const requestTimes = 100 // 每次查询的次数
+const requestTimes = 5 // 每次查询的次数
 /**
  * Creates a request and collects HTTP timings
  * @function request
@@ -178,7 +178,8 @@ async function httpRequset(website, family) {
           //     result: `ECONNREFUSED,${url.parse(website).protocol.replace(':', '')}协议不可达`
           //   })
           // else return resolve({ status: false, result: `${err.errno},其它错误` })
-          return resolve({ status: false, result: err.errno })
+          // console.log(err.code)
+          return resolve({ status: false, result: err.code })
         }
         resolve({
           status: true,
@@ -264,8 +265,8 @@ async function networkTest(website, family = 0) {
   }
 }
 
-// ;(async () => {
-//   let r = await networkTest('www.buct.edu.cn')
-//   console.log(r)
-// })()
+;(async () => {
+  let r = await networkTest('ipv6.live')
+  console.log(r)
+})()
 module.exports = networkTest

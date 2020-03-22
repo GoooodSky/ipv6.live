@@ -1,6 +1,6 @@
 const netPing = require('net-ping')
 const net = require('net')
-const options = { times: 100, timeout: 1000 }
+const options = { times: 5, timeout: 1000 }
 
 function getHrTimeDurationInMs(startTime, endTime) {
   const NS_PER_SEC = 1e9
@@ -86,11 +86,11 @@ async function pingTest(address, family = 4) {
 //   }
 // }
 
-;(async () => {
-  console.time()
-  let { alive, loss, rtt } = await pingTest('155.94.170.155')
-  console.timeEnd()
-  console.log({ alive, loss, rtt })
-})()
+// ;(async () => {
+//   console.time()
+//   let { alive, loss, rtt } = await pingTest('155.94.170.155')
+//   console.timeEnd()
+//   console.log({ alive, loss, rtt })
+// })()
 
 module.exports = pingTest
