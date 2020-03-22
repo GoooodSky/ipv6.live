@@ -22,8 +22,10 @@ const universitySchema = new Schema(
     IPv4DNS: Number,
     IPv6DNS: Number,
 
-    IPv4Test: Array,
-    IPv6Test: Array
+  
+    PingTest: Array,
+    HttpTest: Array,
+    HttpsTest: Array
   },
   { versionKey: false }
 )

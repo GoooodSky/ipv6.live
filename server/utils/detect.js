@@ -9,8 +9,9 @@ const mongoose = require('mongoose')
 const UniversityModel = require('../db/models/university')
 const { getTime } = require('./tools')
 
-const TIMEOUT_IN_MILLISECONDS = 1 * 1000
-const options = { times: 5, timeout: 1000 }
+const TIMEOUT_IN_MILLISECONDS = 2 * 1000
+const options = { times: 10, timeout: 1000 }
+const requestTimes = 10
 
 mongoose
   .connect('mongodb://127.0.0.1:27017/university', {
@@ -58,7 +59,8 @@ function request({ method = 'GET', protocol, hostname, port, path, family, heade
       port,
       path,
       family,
-      headers
+      headers,
+      timeout: TIMEOUT_IN_MILLISECONDS
     },
 
     res => {
@@ -157,6 +159,57 @@ async function httpRequset(website, family) {
       }
     )
   })
+}
+async function networkRequest(website, family) {
+  // let status = await httpRequset(website, family)
+  // console.log()
+
+  let response = await Promise.all(
+    Array(requestTimes)
+      .fill(1)
+      .map(async e => {
+        let status = await httpRequset(website, family)
+        return status
+      })
+  )
+  let status = response.some(e => e.status == true)
+
+  if (status) {
+    let reached = response.filter(e => e.status == true)
+    let reachedCount = reached.length
+    let loss = Number((response.filter(e => e.status == false).length / requestTimes).toFixed(5))
+
+    let dnsLookup = Number((reached.map(e => e.result.dnsLookup).reduce((a, b) => a + b) / reachedCount).toFixed(3))
+    let tcpConnection = Number((reached.map(e => e.result.tcpConnection).reduce((a, b) => a + b) / reachedCount).toFixed(3))
+    let tlsHandshake = url.parse(website).protocol.startsWith('http:')
+      ? undefined
+      : Number((reached.map(e => e.result.tlsHandshake).reduce((a, b) => a + b) / reachedCount).toFixed(3))
+
+    let firstByte = Number((reached.map(e => e.result.firstByte).reduce((a, b) => a + b) / reachedCount).toFixed(3))
+    let contentTransfer = Number((reached.map(e => e.result.contentTransfer).reduce((a, b) => a + b) / reachedCount).toFixed(3))
+    let total = Number((reached.map(e => e.result.total).reduce((a, b) => a + b) / reachedCount).toFixed(3))
+    let docSize = Number((reached.map(e => e.result.docSize).reduce((a, b) => a + b) / reachedCount).toFixed(0))
+
+    return {
+      status: true,
+      loss,
+      result: {
+        dnsLookup,
+        tcpConnection,
+        tlsHandshake,
+        firstByte,
+        contentTransfer,
+        total,
+        docSize
+      }
+    }
+  } else {
+    return {
+      status: false,
+      loss: 100,
+      result: [...new Set(response.map(e => e.result))]
+    }
+  }
 }
 async function dnsResolver(website) {
   let IPv4Resolver = () => {
@@ -259,10 +312,10 @@ async function detect() {
       let [IPv4Ping, IPv6Ping, IPv4HttpStatus, IPv4HttpsStatus, IPv6HttpStatus, IPv6HttpsStatus] = await await Promise.all([
         await pingTest(university.IPv4Address, 4),
         await pingTest(university.IPv6Address, 6),
-        await httpRequset(`http://${university.website}`, 4),
-        await httpRequset(`https://${university.website}`, 4),
-        await httpRequset(`http://${university.website}`, 6),
-        await httpRequset(`https://${university.website}`, 6)
+        await networkRequest(`http://${university.website}`, 4),
+        await networkRequest(`https://${university.website}`, 4),
+        await networkRequest(`http://${university.website}`, 6),
+        await networkRequest(`https://${university.website}`, 6)
       ])
 
       //   let IPv4Ping = await pingTest(university.IPv4Address, 4)
@@ -274,30 +327,33 @@ async function detect() {
 
       let timeNow = getTime()
       university.updateTime = timeNow
-      university.IPv4Test.push({
+      university.PingTest.push({
         updateTime: timeNow,
         IPv4Ping,
-        IPv4HttpStatus,
-        IPv4HttpsStatus
+        IPv6Ping
       })
-      university.IPv6Test.push({
+      university.HttpTest.push({
         updateTime: timeNow,
-        IPv6Ping,
-        IPv6HttpStatus,
+        IPv4HttpStatus,
+        IPv6HttpStatus
+      })
+      university.HttpsTest.push({
+        updateTime: timeNow,
+        IPv4HttpsStatus,
         IPv6HttpsStatus
       })
 
-      //   console.log(
-      //     count++,
-      //     university.name,
-      //     IPv4Ping.alive,
-      //     IPv6Ping.alive,
-      //     IPv4HttpStatus.status,
-      //     IPv4HttpsStatus.status,
-      //     IPv6HttpStatus.status,
-      //     IPv6HttpsStatus.status,
-      //     '更新完成'
-      //   )
+      // console.log(
+      //   count++,
+      //   university.name,
+      //   IPv4Ping.alive,
+      //   IPv6Ping.alive,
+      //   IPv4HttpStatus.status,
+      //   IPv4HttpsStatus.status,
+      //   IPv6HttpStatus.status,
+      //   IPv6HttpsStatus.status,
+      //   '更新完成'
+      // )
       university.save(() => {
         console.log(
           count++,
@@ -316,5 +372,20 @@ async function detect() {
   }
   console.timeEnd()
 }
-
 detect()
+// ;(async () => {
+//   let universitys = await UniversityModel.find()
+//   let dual = universitys.filter(university => {
+//     return (
+//       university.IPv4DNS != 0 &&
+//       university.IPv6DNS != 0 &&
+//       university.IPv6Test.some(e => e.IPv6Ping.alive == true && university.IPv4Test.some(e => e.IPv4Ping.alive == true))
+//     )
+//   })
+
+//   let r = dual.map(e => {
+//     return e.IPv6Test[0].IPv6Ping.rtt.max < e.IPv4Test[0].IPv4Ping.rtt.max
+//   })
+//   console.log(dual.length)
+//   console.log(r.filter(e => e == true).length)
+// })()
