@@ -10,8 +10,13 @@ const UniversityModel = require('../db/models/university')
 const { getTime } = require('./tools')
 
 const TIMEOUT_IN_MILLISECONDS = 2 * 1000
-const options = { times: 10, timeout: 1000 }
-const requestTimes = 10
+const options = { times: 50, timeout: 1000 }
+const requestTimes = 50
+
+let count = 1
+let period = 1
+
+let isUpdating = false
 
 mongoose
   .connect('mongodb://127.0.0.1:27017/university', {
@@ -211,32 +216,6 @@ async function networkRequest(website, family) {
     }
   }
 }
-async function dnsResolver(website) {
-  let IPv4Resolver = () => {
-    return new Promise((resolve, reject) => {
-      dns.resolve4(website, function(err, IPv4List) {
-        if (err || IPv4List.length == 0) {
-          return resolve({ IPv4DNS: 0, IPv4Address: null })
-        }
-        resolve({ IPv4DNS: IPv4List.length, IPv4Address: IPv4List.shift() })
-      })
-    })
-  }
-  let IPv6Resolver = () => {
-    return new Promise((resolve, reject) => {
-      dns.resolve6(website, function(err, IPv6List) {
-        if (err || IPv6List.length == 0) {
-          return resolve({ IPv6DNS: 0, IPv6Address: null })
-        }
-        resolve({ IPv6DNS: IPv6List.length, IPv6Address: IPv6List.shift() })
-      })
-    })
-  }
-
-  let [{ IPv4DNS, IPv4Address }, { IPv6DNS, IPv6Address }] = await Promise.all([await IPv4Resolver(), await IPv6Resolver()])
-
-  return { IPv4DNS, IPv4Address, IPv6DNS, IPv6Address }
-}
 
 async function pingTest(address, family = 4) {
   family = net.isIPv6(address) ? 6 : 4
@@ -285,45 +264,17 @@ async function pingTest(address, family = 4) {
   return { alive, loss, rtt }
 }
 
-let count = 1
-async function detect() {
-  let universitys = await UniversityModel.find()
-
-  // 初始化dns
-  //   for (let index = 0; index < universitys.length; index++) {
-  //     const element = universitys[index]
-  //     let { IPv4DNS, IPv4Address, IPv6DNS, IPv6Address } = await dnsResolver(element.website)
-  //     element.IPv4DNS = IPv4DNS
-  //     element.IPv4Address = IPv4Address
-  //     element.IPv6DNS = IPv6DNS
-  //     element.IPv6Address = IPv6Address
-
-  //     element.save(() => {
-  //       console.log(count++, element.name, IPv4DNS, IPv4Address, IPv6DNS, IPv6Address, '--保存成功')
-  //     })
-  //   }
-  console.time()
-  for (let index = 0; index < universitys.length; index++) {
-    let university = universitys[index]
-    //   universitys.map(async university => {
-    // const university = universitys[index]
-
-    if (university.IPv6DNS && university.IPv4DNS && university.website) {
+async function updateInfo(university) {
+  return new Promise(async (resolve, reject) => {
+    if (university) {
       let [IPv4Ping, IPv6Ping, IPv4HttpStatus, IPv4HttpsStatus, IPv6HttpStatus, IPv6HttpsStatus] = await await Promise.all([
-        await pingTest(university.IPv4Address, 4),
-        await pingTest(university.IPv6Address, 6),
-        await networkRequest(`http://${university.website}`, 4),
-        await networkRequest(`https://${university.website}`, 4),
-        await networkRequest(`http://${university.website}`, 6),
-        await networkRequest(`https://${university.website}`, 6)
+        pingTest(university.IPv4Address, 4),
+        pingTest(university.IPv6Address, 6),
+        networkRequest(`http://${university.website}`, 4),
+        networkRequest(`https://${university.website}`, 4),
+        networkRequest(`http://${university.website}`, 6),
+        networkRequest(`https://${university.website}`, 6)
       ])
-
-      //   let IPv4Ping = await pingTest(university.IPv4Address, 4)
-      //   let IPv6Ping = await pingTest(university.IPv6Address, 6)
-      //   let IPv4HttpsStatus = await httpRequset(`http://${university.website}`, 4)
-      //   let IPv4HttpStatus = await httpRequset(`https://${university.website}`, 4)
-      //   let IPv6HttpStatus = await httpRequset(`http://${university.website}`, 6)
-      //   let IPv6HttpsStatus = await httpRequset(`https://${university.website}`, 6)
 
       let timeNow = getTime()
       university.updateTime = timeNow
@@ -343,19 +294,21 @@ async function detect() {
         IPv6HttpsStatus
       })
 
-      // console.log(
-      //   count++,
-      //   university.name,
-      //   IPv4Ping.alive,
-      //   IPv6Ping.alive,
-      //   IPv4HttpStatus.status,
-      //   IPv4HttpsStatus.status,
-      //   IPv6HttpStatus.status,
-      //   IPv6HttpsStatus.status,
-      //   '更新完成'
-      // )
+    //   console.log(
+    //     period,
+    //     count++,
+    //     university.name,
+    //     IPv4Ping,
+    //     IPv6Ping,
+    //     IPv4HttpStatus.status,
+    //     IPv4HttpsStatus.status,
+    //     IPv6HttpStatus.status,
+    //     IPv6HttpsStatus.status,
+    //     '更新完成'
+    //   )
       university.save(() => {
         console.log(
+          period,
           count++,
           university.name,
           IPv4Ping.alive,
@@ -367,25 +320,33 @@ async function detect() {
           '更新完成'
         )
       })
+      resolve(1)
+    } else {
+      resolve(1)
     }
-    //   })
+  })
+}
+
+async function detect() {
+  if (isUpdating === false) {
+    isUpdating = true
+    console.log(`开始更新第${period}轮数据...`)
+
+    let universityslist = await UniversityModel.find()
+
+    let universitys = universityslist.filter(university => university.IPv6DNS && university.IPv4DNS && university.website)
+    console.time()
+    for (universitys of universitys) {
+      await updateInfo(universitys)
+    }
+    isUpdating = false
+    count = 1
+    period++
+    console.log(isUpdating)
+    console.timeEnd()
   }
-  console.timeEnd()
 }
 detect()
-// ;(async () => {
-//   let universitys = await UniversityModel.find()
-//   let dual = universitys.filter(university => {
-//     return (
-//       university.IPv4DNS != 0 &&
-//       university.IPv6DNS != 0 &&
-//       university.IPv6Test.some(e => e.IPv6Ping.alive == true && university.IPv4Test.some(e => e.IPv4Ping.alive == true))
-//     )
-//   })
-
-//   let r = dual.map(e => {
-//     return e.IPv6Test[0].IPv6Ping.rtt.max < e.IPv4Test[0].IPv4Ping.rtt.max
-//   })
-//   console.log(dual.length)
-//   console.log(r.filter(e => e == true).length)
-// })()
+setInterval(() => {
+  detect()
+}, 30 * 60 * 1000)
