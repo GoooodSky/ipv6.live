@@ -18,9 +18,9 @@
       to="/map"
       >高校地图</nuxt-link
     >
-    <!-- <li class="nav-item" index="4">IPv4/IPv6过渡</li>
+    <li class="nav-item" index="4">CERNET网络分析</li>
     <li class="nav-item" index="5">API</li>
-    <li class="nav-item" index="6">关于我们</li>-->
+    <li class="nav-item" index="6">关于我们</li>
   </nav>
 </template>
 

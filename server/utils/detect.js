@@ -14,7 +14,7 @@ const options = { times: 50, timeout: 500 };
 const requestTimes = 50;
 
 let count = 1;
-let period = 1;
+let period = 16;
 
 let isUpdating = false;
 
@@ -431,11 +431,11 @@ async function detect() {
 
     let universitys = universityslist.filter(
       university =>
-        university.IPv6DNS && university.IPv4DNS && university.website
+        university.IPv6DNS==0 && university.IPv4DNS && university.website
     );
     console.time();
-    for (universitys of universitys) {
-      await updateInfo(universitys);
+    for (university of universitys) {
+      await updateInfo(university);
     }
     isUpdating = false;
     console.log(`第${period++}轮数据更新完成`);

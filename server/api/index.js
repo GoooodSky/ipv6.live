@@ -9,8 +9,20 @@ let router = new Router({
 
 router.get('/getUniversity', async ctx => {
   let universityList = await University.find().sort({
-    rank: 1
+    serial: 1
   })
+  //原数据和新数据映射
+  // let universityList = JSON.parse(JSON.stringify(universityLists)).map(university=>{
+  //   university.ipv6Resolve = university.IPv6Address
+  //   university.ipv4Resolve = university.IPv4Address
+  //   university.ipv4Ping = Boolean(university.IPv4DNS)
+  //   university.ipv6Ping = Boolean(university.IPv6DNS)
+  //   university.HttpTest = null
+  //   university.HttpsTest = null
+  //   university.PingTest = null
+  //   return university
+  // })
+
   ctx.body = {
     universityList
   }
@@ -22,11 +34,12 @@ router.get('/getCity', async ctx => {
       return (async () => {
         let cityCount = await University.find({
           city: city.cityName,
-          ipv6Resolve: {
-            $ne: 'N/A'
+          IPv6DNS: {
+            $ne: 0
           }
         })
-        city.properties.count = cityCount.length
+        let count = cityCount.filter(e=>(e.HttpTest.some(test=>test.IPv6HttpStatus.status==true)||e.HttpsTest.some(test=>test.IPv6HttpsStatus.status==true)))
+        city.properties.count = count.length
         return city
       })()
     })

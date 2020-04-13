@@ -7,7 +7,7 @@
         <span>｜</span>
         <span :class="showProvince ? 'active' : 'unactive'" @click="showProvince = true">列表</span>
       </section>
-      <section class="intro">根据2019.12.12数据绘制，颜色越深代表该城市支持IPv6的学校越多</section>
+      <section class="intro">根据2020.03.12数据绘制，颜色越深代表该城市支持IPv6的学校越多</section>
     </section>
     <keep-alive>
       <UniversityProvince v-if="showProvince" />

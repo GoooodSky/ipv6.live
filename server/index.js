@@ -5,12 +5,13 @@ import mongoose from 'mongoose'
 
 import dbConfig from './db/config'
 import api from './api/index'
-import spider from './utils/spider'
+// import spider from './utils/spider'
 
 const app = new Koa()
 
 mongoose.connect(dbConfig.db, {
-  useNewUrlParser: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
 mongoose.connection
   .on('connected', () => {
@@ -37,7 +38,7 @@ async function start() {
   } else {
     await nuxt.ready()
   }
-  spider.updateUniversityInfo(1) //每1小时刷新一次
+  // spider.updateUniversityInfo(1) //每1小时刷新一次
   app.use(api.routes()).use(api.allowedMethods())
   app.use(ctx => {
     ctx.status = 200

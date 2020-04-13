@@ -25,11 +25,19 @@ const universitySchema = new Schema(
   
     PingTest: Array,
     HttpTest: Array,
-    HttpsTest: Array
+    HttpsTest: Array,
+
+    PingResult: Object,
+    PingDual: Boolean,
+
+    HttpResult: Object,
+    HttpDual: Boolean,
+    HttpsResult: Object,
+    HttpsDual: Boolean
   },
   { versionKey: false }
 )
 
-const universityListModel = mongoose.model('universityInfo', universitySchema)
+const universityListModel = mongoose.model('universityInfos', universitySchema)
 
 module.exports = universityListModel

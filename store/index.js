@@ -23,9 +23,9 @@ export const mutations = {
         }).length
         let ipv6SupportCount = universityList.filter(e => {
           if (province == '全国') {
-            return e.ipv6Resolve != 'N/A'
+            return e.IPv6DNS != 0 &&( e.HttpTest.some(test=>test.IPv6HttpStatus.status==true)||e.HttpsTest.some(test=>test.IPv6HttpsStatus.status==true))
           } else {
-            return e.ipv6Resolve != 'N/A' && e.province == province
+            return e.IPv6DNS != 0 && (e.HttpTest.some(test=>test.IPv6HttpStatus.status==true)||e.HttpsTest.some(test=>test.IPv6HttpsStatus.status==true)) && e.province == province
           }
         }).length
         let percentage = Number(((ipv6SupportCount / universityCount) * 100).toFixed(2))
