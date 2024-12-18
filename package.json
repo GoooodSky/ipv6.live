@@ -8,29 +8,29 @@
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server --exec babel-node",
     "build": "nuxt build",
     "start": "cross-env NODE_ENV=production babel-node server/index.js",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate",
+    "server": "pm2 start server/index.js --interpreter babel-node"
   },
   "dependencies": {
+    "@antv/g2": "^4.0.6",
+    "@antv/l7": "^2.0.0-beta.17",
     "@nuxtjs/axios": "^5.3.6",
-    "babel-cli": "^6.26.0",
     "cross-env": "^5.2.0",
-    "echarts": "^4.2.1",
-    "element-ui": "^2.4.11",
+    "element-ui": "2.4.11",
     "koa": "^2.6.2",
     "koa-router": "^7.4.0",
     "mongoose": "^5.4.20",
     "net-ping": "^1.2.3",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.12.0",
     "nuxt": "^2.4.0",
-    "sass-loader": "^7.1.0",
-    "vue-baidu-map": "^0.21.19"
+    "sass-loader": "^7.1.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "nodemon": "^1.18.9"
   },
   "nodemonConfig": {
-    "ignore": [
-      "server/db/log/universityUpdateLog.json"
-    ]
+    "ignore": []
   }
 }

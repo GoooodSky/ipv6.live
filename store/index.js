@@ -1,14 +1,13 @@
-import axios from 'axios'
-
 export const state = () => ({
   universityList: [],
   provincesDetail: {},
   detailVisible: false,
-  selectedUniversity: ''
+  selectedUniversity: '',
+  // cityList: {}
 })
 
 export const mutations = {
-  initial(state, universityList) {
+  initialuniversityList(state, universityList) {
     let provinces = ['全国'].concat(...new Set(universityList.map(item => item.province)))
 
     state.universityList = universityList
@@ -24,12 +23,12 @@ export const mutations = {
         }).length
         let ipv6SupportCount = universityList.filter(e => {
           if (province == '全国') {
-            return e.ipv6Resolve != 'N/A'
+            return e.IPv6DNS != 0 &&( e.HttpTest.some(test=>test.IPv6HttpStatus.status==true)||e.HttpsTest.some(test=>test.IPv6HttpsStatus.status==true))
           } else {
-            return e.ipv6Resolve != 'N/A' && e.province == province
+            return e.IPv6DNS != 0 && (e.HttpTest.some(test=>test.IPv6HttpStatus.status==true)||e.HttpsTest.some(test=>test.IPv6HttpsStatus.status==true)) && e.province == province
           }
         }).length
-        let percentage = ((ipv6SupportCount / universityCount) * 100).toFixed(2) + '%'
+        let percentage = Number(((ipv6SupportCount / universityCount) * 100).toFixed(2))
 
         return { [province]: { universityCount, ipv6SupportCount, percentage } }
       })
@@ -41,12 +40,18 @@ export const mutations = {
   },
   detailInvisible(state) {
     state.detailVisible = false
-  }
+  },
+  // initialCityList(state, cityList) {
+    // state.cityList = cityList
+  // }
 }
 export const actions = {
-  async nuxtServerInit({ commit }) {
-    let {data: { universityList }} = await axios.get('http://127.0.0.1:3000/api/getUniversity')
-    commit('initial', universityList)
+  async nuxtServerInit({ commit }, ctx) {
+    let { data: { universityList } } = await ctx.$axios.get('/api/getUniversity')
+    commit('initialuniversityList', universityList)
+
+    // let { data: { cityData } } = await ctx.$axios.get('http://127.0.0.1:3000/api/getCity')
+    // commit('initialCityList', cityData)
   },
   detailVisible({ commit }, selectedUniversity) {
     commit('detailVisible', selectedUniversity)

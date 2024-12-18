@@ -1,32 +1,27 @@
 <template>
   <div id="index">
-    <Welcome />
+    <Search/>
     <UniversityList />
-    <!-- <UniversityMap /> -->
+    <!-- <UniversityDistribution /> -->
   </div>
 </template>
 
 <script>
-import Welcome from '@/components/index/welcome'
+import Search from '@/components/utils/search'
 import UniversityList from '@/components/university/university-list'
-import UniversityMap from '@/components/university/university-map'
-import axios from 'axios'
+import UniversityDistribution from '@/components/university/university-distribution'
 export default {
   name: 'index',
   layoyt: 'default',
   components: {
-    Welcome,
+    Search,
     UniversityList,
-    UniversityMap
+    UniversityDistribution
   },
-  head() {
-    return { title: 'IPv6部署状态 -- 总览' }
-  },
-  // async fetch({ store, params }) {
-  //   let {data: { universityList }} = await axios.get('http://127.0.0.1:3000/api/getUniversity')
-  //   store.commit('initial', universityList)
-  // }
+  head: { title: 'IPv6部署状态 -- 总览' }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+
+</style>

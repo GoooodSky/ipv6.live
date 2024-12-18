@@ -1,8 +1,8 @@
 import dns from 'dns'
 import net from 'net'
 import ping from 'net-ping'
-import fs from 'fs'
-import path from 'path'
+// import fs from 'fs'
+// import path from 'path'
 import mongoose from 'mongoose'
 import UniversityModel from '../db/models/university'
 let isUpdating = false
@@ -24,18 +24,18 @@ function getTime() {
     .getDate()
     .toString()
     .padStart(2, '0')} ${date
-    .getHours()
-    .toString()
-    .padStart(2, '0')}:${date
-    .getMinutes()
-    .toString()
-    .padStart(2, '0')}`
+      .getHours()
+      .toString()
+      .padStart(2, '0')}:${date
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}`
   return now
 }
 
 async function getIP(url) {
   let ipv4Promise = new Promise((resolve, reject) => {
-    dns.resolve4(url, function(err, ipv4List) {
+    dns.resolve4(url, function (err, ipv4List) {
       if (err || ipv4List.length == 0) {
         return resolve('N/A')
       }
@@ -43,14 +43,13 @@ async function getIP(url) {
     })
   })
   let ipv6Promise = new Promise((resolve, reject) => {
-    dns.resolve6(url, function(err, ipv6List) {
+    dns.resolve6(url, function (err, ipv6List) {
       if (err || ipv6List.length == 0) {
         return resolve('N/A')
       }
       resolve(ipv6List.shift())
     })
   })
-
   let ipv4 = await ipv4Promise
   let ipv6 = await ipv6Promise
 
@@ -59,7 +58,7 @@ async function getIP(url) {
 async function pingTest(ipv4, ipv6) {
   async function ping4(ipv4) {
     let { ipv4Ping, ipv4Rtt } = await new Promise((resolve, reject) => {
-      session4.pingHost(ipv4, function(error, target, sent, rcvd) {
+      session4.pingHost(ipv4, function (error, target, sent, rcvd) {
         if (error) {
           return resolve({ ipv4Ping: false, ipv4Rtt: 10000 })
         }
@@ -71,7 +70,7 @@ async function pingTest(ipv4, ipv6) {
 
   async function ping6(ipv6) {
     let { ipv6Ping, ipv6Rtt } = await new Promise((resolve, reject) => {
-      session6.pingHost(ipv6, function(error, target, sent, rcvd) {
+      session6.pingHost(ipv6, function (error, target, sent, rcvd) {
         if (error) {
           return resolve({ ipv6Ping: false, ipv6Rtt: 10000 })
         }
@@ -85,7 +84,7 @@ async function pingTest(ipv4, ipv6) {
 
   return { ipv4Ping, ipv4Rtt, ipv6Ping, ipv6Rtt }
 }
-
+async function httpTest(ipv4, ipv6) { }
 async function updateInfo(address) {
   let { ipv4, ipv6 } = await getIP(address)
   let { ipv4Ping, ipv4Rtt, ipv6Ping, ipv6Rtt } = await pingTest(ipv4, ipv6)
@@ -103,11 +102,15 @@ async function spider() {
     let endTag = universityList.length
     universityList.map(async university => {
       let { ipv4, ipv6, ipv4Ping, ipv4Rtt, ipv6Ping, ipv6Rtt } = await updateInfo(university.website)
-      university.ipv4Resolve = ipv4
-      university.ipv6Resolve = ipv6
+      if (ipv4 != 'N/A') {
+        university.ipv4Resolve = ipv4
+      }
+      if (ipv6 != 'N/A') {
+        university.ipv6Resolve = ipv6
+      }
       university.ipv4Ping = ipv4Ping
       university.ipv6Ping = ipv6Ping
-      university.save(function() {
+      university.save(function () {
         console.log(startTag, university.name + ipv4, ipv4Ping, ipv4Rtt, ipv6, ipv6Ping, ipv6Rtt, '更新成功')
         if (endTag === startTag++) {
           let updatedTime = getTime()
@@ -120,12 +123,12 @@ async function spider() {
   }
 }
 spider()
-// function updateUniversityInfo(h) {
-//   //将小时转化成毫秒
-//   let freq = h * 60 * 60 * 1000
-//   spider()
-//   setInterval(() => {
-//     spider()
-//   }, freq)
-// }
-// export default { updateUniversityInfo }
+function updateUniversityInfo(h) {
+  //将小时转化成毫秒
+  let freq = h * 60 * 60 * 1000
+  spider()
+  setInterval(() => {
+    spider()
+  }, freq)
+}
+export default { updateUniversityInfo }

@@ -1,29 +1,43 @@
-import mongoose from 'mongoose'
+const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const universitySchema = new Schema(
   {
     serial: Number,
-    rank: Number,
     name: String,
-    idCode: Number,
-    superior: String,
+    website: String,
+    schoolCode: Number,
     province: String,
     city: String,
+    superior: String,
     level: String,
     platform: String,
-    website: String,
     remark: String,
-    ipv4Resolve: String,
-    ipv6Resolve: String,
-    ipv4Ping: Boolean,
-    ipv6Ping: Boolean,
-    httpAccess: Boolean,
-    httpsAccess: Boolean,
-    ipv4Rtt: Array,
-    ipv6Rtt: Array,
-    httpRtt: Array
+
+    updateTime: String,
+    statusCode: String,
+
+    IPv4Address: String,
+    IPv6Address: String,
+
+    IPv4DNS: Number,
+    IPv6DNS: Number,
+
+  
+    PingTest: Array,
+    HttpTest: Array,
+    HttpsTest: Array,
+
+    PingResult: Object,
+    PingDual: Boolean,
+
+    HttpResult: Object,
+    HttpDual: Boolean,
+    HttpsResult: Object,
+    HttpsDual: Boolean
   },
   { versionKey: false }
 )
 
-export default mongoose.model('universityLists', universitySchema)
+const universityListModel = mongoose.model('universityInfos', universitySchema)
+
+module.exports = universityListModel
